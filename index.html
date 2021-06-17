@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="/styles.css">
+    <title>Co-Win</title>
+</head>
+<body>
+    <div class="container">
+        <h1><center>Co-Win Application</center></h1>
+        <nav class="topnav">
+            <a href="#home">Home</a>
+            <a href="#contactus">Contact Us</a>
+            <a href="#news">News</a>
+            <a href="#about">About</a>
+        </nav>
+        <img src="/vaccine.png" alt="Vaccine is Important" width=100% height=400>
+        <div class="form-buttons">
+            <button class="btn" onclick="searchbypin()">Search by Pin</button>
+            <button class="btn" onclick="searchbydistrict()">Search by District</button>
+        </div>
+        <div id="pin-container" style="display: none">
+            <div class="form-group">
+                <br>
+                <label for="pin-label">Enter Pin Code:</label><br>
+                <input type="text" id="pin"> <br><br>
+                <div class="form-buttons">
+                    <button class="btn" id="searchpin">Search</button><br><br>
+                </div>
+            </div>
+        </div>
+        <div id="district-container" style="display: none">
+            <div class="form-group">
+                <label for="states-label">States List : </label>
+                <select class="form-control" id="state-select"> </select>
+            </div>
+            <div class="form-group">
+                <label for="districts-label">Districts List : </label>
+                <select class="form-control" id="district-select"> </select>
+            </div>
+            <div class="form-buttons">
+            <button class="btn" id = "find">Search</button>
+            </div>
+        </div>
+        <table class="vaccine" id="table-container" style="display: none">
+
+            <tr>
+                <th width ="200">Place </th>
+                <th width="400">Address</th> 
+                <th width="100">Minimum Age Limit </th>
+                <th width="150">Type of Vaccine</th> 
+                <th width="100">Free/ Paid </th>
+                <th width="100">Available Dose1</th>
+                <th width="100">Available Dose2</th>
+            </tr>
+            <tr>
+                <td id="place"></td>
+                <td id="address"></td>
+                <td id="min-age"></td>
+                <td id="typeofvaccine"></td>
+                <td id="free-paid"></td>
+                <td id="availableslots"></td>
+                <td id="availableslots2"></td>
+            </tr>
+        </table>
+        <br>
+        <br>
+    </div>
+    <script src="/main.js"></script>
+    
+</body>
+</html>
