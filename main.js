@@ -4,74 +4,63 @@ var mm = String(today.getMonth()+1).padStart(2,'0');
 var yyyy=today.getFullYear();
 var date = dd+'-'+mm+'-'+yyyy;
 
-var output =' ';
-var output1 =' ';
-var output_states=' ';
-var output_districts=' ';
-var output_minage=' ';
-var output_type=' ';
-var output_freepaid=' ';
-var output_availableslots2=' ';
-var output_address=' ';
-
 const states_list=document.getElementById("state-select");
 const districts_list=document.getElementById("district-select");
-var place=document.getElementById("place");
-var availableslots=document.getElementById("availableslots");
-var freepaid=document.getElementById("free-paid");
-var minage=document.getElementById("min-age");
-var vaccine=document.getElementById("typeofvaccine");
-var pincontainer=document.getElementById("pin-container");
-var districtcontainer=document.getElementById("district-container");
-var vaccinetable=document.getElementById("table-container");
-var address=document.getElementById("address");
-var availableslots2=document.getElementById("availableslots2");
+const pincontainer=document.getElementById("pin-container");
+const districtcontainer=document.getElementById("district-container");
+var tbl=document.getElementById("table-container");
+
+const generateTable=(response, length)=>{
+    var tableRows = tbl.getElementsByTagName('tr');
+    var rowCount = tableRows.length;
+    
+    for (var x=rowCount-1; x>0; x--) {
+        tbl.removeChild(tableRows[x]);
+    }
+
+    for (var i = 0; i < length; i++) {
+      var row = document.createElement("tr");
+      row.style.fontWeight="bold";
+      output = response.sessions[i].name;
+      output_address = response.sessions[i].address;
+      output_minage = response.sessions[i].min_age_limit;
+      output_type = response.sessions[i].vaccine;
+      output_freepaid = response.sessions[i].fee_type;
+      output_availabledose1 = response.sessions[i].available_capacity_dose1;
+      output_availabledose2 = response.sessions[i].available_capacity_dose2;
+  
+      var arr = [output, output_address, output_minage, output_type, output_freepaid, output_availabledose1, output_availabledose2];
+
+      for (var j = 0; j < 7; j++) {
+        var cell = document.createElement("td");
+        cell.style.textAlign="center";
+        var cellText = document.createTextNode(arr[j]);
+        cell.appendChild(cellText);
+        row.appendChild(cell);
+      }
+      tbl.appendChild(row);
+    }
+}
 
 //Searchbypin function triggers when Search by Pin is clicked.
 const searchbypin=()=>{
         pincontainer.style.display = "block";
         districtcontainer.style.display="none";
-        vaccinetable.style.display="none";
+        tbl.style.display="none";
         //Search Button for displaying the vaccine level details wrto Pin Code
         searchpin.addEventListener('click',()=>{
         var pin = document.getElementById("pin");
         var pincode=pin.value;
         const xhr = new XMLHttpRequest;
-        vaccinetable.style.display = "block";
+        tbl.style.display = "block";
         const pin_url = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByPin?pincode=${pincode}&date=${date}`;
         xhr.open('GET',pin_url);
         xhr.onreadystatechange=()=>{
             if(xhr.readyState==4 && xhr.status==200){
                 var pin_res=JSON.parse(xhr.responseText);
-                console.log(pin_res);
+                //console.log(pin_res);
                 const pin_len=pin_res.sessions.length;
-                output =' ';
-                output1 =' ';
-                output_states=' ';
-                output_districts=' ';
-                output_minage=' ';
-                output_type=' ';
-                output_freepaid=' ';
-                output_availableslots2=' ';
-                output_address=' ';
-                for(let i=0; i<pin_len;i++){
-                    output+=`<tr><b>${pin_res.sessions[i].name}</b></tr><hr>`
-                    output_address+=`<tr>${pin_res.sessions[i].address}</tr><hr>`
-                    output1+=`<tr><b>${pin_res.sessions[i].available_capacity_dose1}</b></tr><hr>`
-                    output_availableslots2+=`<tr><b>${pin_res.sessions[i].available_capacity_dose2}</b></tr><hr>`
-                    output_minage+=`<tr><b>${pin_res.sessions[i].min_age_limit}</b></tr><br><hr>`
-                    output_type+=`<tr><b>${pin_res.sessions[i].vaccine}</b></tr><br><hr>`
-                    output_freepaid+=`<tr><b>${pin_res.sessions[i].fee_type}</b></tr><br><hr>`
-                }
-                states_list.innerHTML = output_states;
-                districts_list.innerHTML=output_districts;
-                place.innerHTML=output;
-                address.innerHTML=output_address;
-                availableslots.innerHTML=output1;
-                availableslots2.innerHTML=output_availableslots2;
-                minage.innerHTML=output_minage;
-                vaccine.innerHTML=output_type;
-                freepaid.innerHTML=output_freepaid;
+                generateTable(pin_res, pin_len);
             }
         }
         xhr.send();
@@ -82,21 +71,21 @@ const searchbypin=()=>{
 const searchbydistrict=()=>{
         districtcontainer.style.display = "block";
         pincontainer.style.display = "none";
-        vaccinetable.style.display="none";
-const xhr = new XMLHttpRequest;
-const states_url = "https://cdn-api.co-vin.in/api/v2/admin/location/states";
-xhr.open('GET',states_url);
-xhr.onreadystatechange=()=>{
-    if(xhr.readyState==4 && xhr.status==200){
-        var states_res=JSON.parse(xhr.responseText);
-        const states_len=states_res.states.length;
-        output_states=' ';
-        for(let i=0; i<states_len; i++){
-            output_states+= `<option>${states_res.states[i].state_name}</option>`
-        }
-        states_list.innerHTML = output_states;
-        var selected_index, state_id;
-        states_list.addEventListener('change',(e) => {
+        tbl.style.display="none";
+        const xhr = new XMLHttpRequest;
+        const states_url = "https://cdn-api.co-vin.in/api/v2/admin/location/states";
+        xhr.open('GET',states_url);
+        xhr.onreadystatechange=()=>{
+        if(xhr.readyState==4 && xhr.status==200){
+            var states_res=JSON.parse(xhr.responseText);
+            const states_len=states_res.states.length;
+            output_states=' ';
+            for(let i=0; i<states_len; i++){
+                output_states+= `<option>${states_res.states[i].state_name}</option>`
+            }
+            states_list.innerHTML = output_states;
+            var selected_index, state_id;
+            states_list.addEventListener('change',(e) => {
 
             selected_index=e.target.selectedIndex;
             if(selected_index < 8){
@@ -130,39 +119,18 @@ xhr.onreadystatechange=()=>{
                                 dist_id= dist.district_id;
                             }
                         })
+                //console.log(dist_id);
                 //Search button for displaying the vaccine details wrto District Names
                 find.addEventListener('click', ()=>{
-                vaccinetable.style.display = "block";
+                tbl.style.display = "block";
                 const slots_url = `https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=${dist_id}&date=${date}`
                 xhr.open('GET',slots_url);
                 xhr.onreadystatechange=()=>{
                 if(xhr.readyState==4 && xhr.status==200){
                     var slots_res=JSON.parse(xhr.responseText);
-                    console.log(slots_res);
+                    //console.log(slots_res);
                     const slots_len=slots_res.sessions.length;
-                    output =' ';
-                    output1 =' ';
-                    output_minage=' ';
-                    output_type=' ';
-                    output_freepaid=' ';
-                    output_availableslots2=' ';
-                    output_address=' ';
-                    for(let i=0; i<slots_len;i++){
-                        output+=`<tr><b>${slots_res.sessions[i].name}</b></tr><hr>`
-                        output_address+=`<tr>${slots_res.sessions[i].address}</tr><hr>`
-                        output1+=`<tr><b>${slots_res.sessions[i].available_capacity_dose1}</b></tr><hr>`
-                        output_availableslots2+=`<tr><b>${slots_res.sessions[i].available_capacity_dose2}</b></tr><hr>`
-                        output_minage+=`<tr><b>${slots_res.sessions[i].min_age_limit}</b></tr><hr>`
-                        output_type+=`<tr><b>${slots_res.sessions[i].vaccine}</b></tr><hr>`
-                        output_freepaid+=`<tr><b>${slots_res.sessions[i].fee_type}</b></tr><hr>`
-                    }
-                    place.innerHTML=output;
-                    address.innerHTML=output_address;
-                    availableslots.innerHTML=output1;
-                    availableslots2.innerHTML=output_availableslots2;
-                    minage.innerHTML=output_minage;
-                    vaccine.innerHTML=output_type;
-                    freepaid.innerHTML=output_freepaid;
+                    generateTable(slots_res, slots_len);
                     }
                 }
                 xhr.send();
